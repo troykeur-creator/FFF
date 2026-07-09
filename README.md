@@ -1,2 +1,0 @@
-# FFF
-Friday Fraud Facts
