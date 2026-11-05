@@ -125,16 +125,26 @@ REQUIRED JSON STRUCTURE — return exactly this shape:
   "takeaway": "2 sentences of sharp insight + 1 witty closing line tied to this week's theme",
   "sign_off": "short warm professional Friday sign-off — no name, no fraud jargon, one sentence",
   "sources": [
-    { "name": "KrebsOnSecurity", "url": "https://krebsonsecurity.com" },
+    { "name": "KrebsOnSecurity", "url": "https://krebsonsecurity.com", "article_url": "https://krebsonsecurity.com/2025/01/example-article/" },
     { "name": "Dark Reading", "url": "https://www.darkreading.com" }
   ]
 }
 
-SOURCES RULES — the sources array above must follow this pattern exactly:
-- Include 3 to 6 sources relevant to this edition's stories
-- name: full publication or agency name (e.g. KrebsOnSecurity, FBI IC3, FTC, BankInfoSecurity, SC Magazine, Visa, Mastercard, DOJ)
-- url: homepage URL for that publication (e.g. https://krebsonsecurity.com, https://www.ic3.gov, https://www.ftc.gov)
-- Every object must have both name and url — no other fields
+SOURCES RULES — the sources array must follow this pattern exactly:
+- Include 4 to 8 sources relevant to this edition's stories
+- name: full publication or agency name
+- url: homepage URL for that publication — always include this
+- article_url: direct URL to the specific article cited — include this whenever possible; omit only if no specific article exists (e.g. for a government agency homepage reference)
+- Every object must have both name and url; article_url is optional but strongly preferred
+- No other fields
+
+APPROVED SOURCE LIST — only use sources from this verified list:
+US Cyber/Fraud: KrebsOnSecurity (krebsonsecurity.com), Dark Reading (darkreading.com), BankInfoSecurity (bankinfosecurity.com), SC Magazine (scworld.com), Bleeping Computer (bleepingcomputer.com), The Record / Recorded Future News (therecord.media), SecurityWeek (securityweek.com), Threatpost (threatpost.com)
+US Retail/Payments: Retail Dive (retaildive.com), NRF (nrf.com), Pymnts.com (pymnts.com), RILA (rila.org), Digital Commerce 360 (digitalcommerce360.com)
+US Government/LE: FBI IC3 (ic3.gov), FTC (ftc.gov), DOJ (justice.gov), Secret Service (secretservice.gov), FinCEN (fincen.gov), CFPB (consumerfinance.gov)
+Payments Networks: Visa (visa.com), Mastercard (mastercard.com)
+Canadian: RCMP (rcmp-grc.gc.ca), Canadian Anti-Fraud Centre (antifraudcentre-centreantifraude.ca), Competition Bureau Canada (competitionbureau.gc.ca), Financial Consumer Agency of Canada (canada.ca/en/financial-consumer-agency), Retail Council of Canada (retailcouncil.org)
+Do NOT invent sources outside this list.
 
 CONTENT FOCUS & PRIORITIZATION — apply this weighting when selecting and ordering stories:
 
@@ -165,7 +175,7 @@ PRIORITY 4 — BROADER FRAUD LANDSCAPE:
 - AI in fraud detection or AI-enabled fraud attacks
 - Regulatory changes affecting retail fraud programs
 
-GEOGRAPHIC FOCUS: United States only. Exclude international stories unless they have direct and significant US retail impact.
+GEOGRAPHIC FOCUS: United States and Canada. Prioritize US stories; include Canadian stories when they involve a major Canadian retailer (Canadian Tire, Loblaw, Lowe's Canada, Walmart Canada, Home Hardware), a cross-border fraud trend affecting US retail, or a Canadian law enforcement action with direct US implications. Exclude all other international stories.
 
 STORY SELECTION RULE: When choosing between two equally newsworthy stories, always choose the one involving a peer retailer first, then identity fraud, over general fraud news.
 
@@ -268,24 +278,24 @@ function FraudFactsGenerator() {
         setContent(null);
         try {
             await resolveModel(); // ensure best model is selected
-            const userContent = `Today is ${new Date().toDateString()}. United States stories only. Search ALL 6 categories below separately before writing:
+            const userContent = `Today is ${new Date().toDateString()}. United States and Canada coverage. Search ALL 6 categories below separately before writing:
 
-CATEGORY 1 — IDENTITY & ACCOUNT FRAUD (HIGHEST PRIORITY): Search US news past 7 days on fraudulent account openings, account takeover (ATO), synthetic identity fraud, credential stuffing, new account fraud, loyalty program account fraud, identity theft impacting retail or e-commerce.
+CATEGORY 1 — IDENTITY & ACCOUNT FRAUD (HIGHEST PRIORITY): Search US and Canadian news past 7 days on fraudulent account openings, account takeover (ATO), synthetic identity fraud, credential stuffing, new account fraud, loyalty program account fraud, identity theft impacting retail or e-commerce.
 
-CATEGORY 2 — PEER RETAILERS SIMILAR TO HOME DEPOT (HIGH PRIORITY): Search fraud news past 7 days at Lowe's, Menards, Ace Hardware, Walmart, Target, Costco, Sam's Club, Best Buy, Wayfair, Amazon. Prioritize home improvement, big box, and large US e-commerce retailers.
+CATEGORY 2 — PEER RETAILERS SIMILAR TO HOME DEPOT (HIGH PRIORITY): Search fraud news past 7 days at Lowe's, Menards, Ace Hardware, Home Hardware, Walmart, Target, Costco, Sam's Club, Best Buy, Wayfair, Amazon. Include Canadian peers: Canadian Tire, Loblaw, Lowe's Canada, Walmart Canada.
 
-CATEGORY 3 — RETAIL E-COMMERCE FRAUD: Search RH-ISAC, Retail Dive, NRF, RILA, Pymnts.com for US retail online fraud past 7 days — card-not-present, BOPIS fraud, returns fraud, promo abuse, checkout fraud, marketplace fraud.
+CATEGORY 3 — RETAIL E-COMMERCE FRAUD: Search RH-ISAC, Retail Dive, NRF, RILA, Pymnts.com, Retail Council of Canada for US and Canadian retail online fraud past 7 days — card-not-present, BOPIS fraud, returns fraud, promo abuse, checkout fraud, marketplace fraud.
 
-CATEGORY 4 — FRAUD & CYBER OUTLETS: Search KrebsOnSecurity, Dark Reading, BankInfoSecurity, SC Magazine for US identity fraud, ATO, and retail cybersecurity stories past 7 days.
+CATEGORY 4 — FRAUD & CYBER OUTLETS: Search KrebsOnSecurity, Dark Reading, BankInfoSecurity, SC Magazine, Bleeping Computer, The Record (Recorded Future News) for US and Canadian identity fraud, ATO, and retail cybersecurity stories past 7 days.
 
-CATEGORY 5 — LAW ENFORCEMENT & REGULATORY: Search DOJ, FBI, FTC, Secret Service US press releases past 7 days for identity fraud indictments, retail fraud arrests, ATO-related enforcement, new fraud regulations.
+CATEGORY 5 — LAW ENFORCEMENT & REGULATORY: Search DOJ, FBI, FTC, Secret Service, RCMP, Canadian Anti-Fraud Centre (CAFC), Competition Bureau Canada press releases past 7 days for identity fraud indictments, retail fraud arrests, ATO-related enforcement, new fraud regulations.
 
-CATEGORY 6 — PAYMENTS & FINANCIAL: Search Visa, Mastercard, FTC, FinCEN, CFPB for US payment fraud and identity-related financial crime news past 7 days.
+CATEGORY 6 — PAYMENTS & FINANCIAL: Search Visa, Mastercard, FTC, FinCEN, CFPB, Payments Canada, Financial Consumer Agency of Canada (FCAC) for US and Canadian payment fraud and identity-related financial crime news past 7 days.
 
 SELECTION RULES — apply in order:
 1. Always include at least 1-2 identity fraud or ATO stories — this is the top priority
 2. Always prioritize stories involving peer retailers (home improvement, big box, large e-commerce)
-3. United States only — exclude all international stories
+3. US stories are primary; include Canadian stories only when they meet the criteria in GEOGRAPHIC FOCUS
 4. Select 4-5 stories spanning at least 3 different fraud categories
 5. When choosing between equal stories, always pick peer retailer story first, then identity fraud, over generic fraud news
 
@@ -293,6 +303,10 @@ Write Friday Fraud Facts as Troy. RESPOND WITH JSON ONLY STARTING WITH {
 
 PREVIOUS EDITIONS — do NOT repeat these topics:
 ${usedTopics.length > 0 ? usedTopics.map((t, i) => `Edition ${i + 1}: ${t}`).join("\n") : "None yet — this is the first edition."}`;
+            // Wake Render.com free-tier server before the main call (cold starts take ~30s)
+            try {
+                await fetch("https://fff-proxy.onrender.com/", { signal: AbortSignal.timeout(35000) });
+            } catch (_) { /* ignore — wake ping is best-effort */ }
             const response = await fetch("https://fff-proxy.onrender.com/api/claude", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -302,6 +316,7 @@ ${usedTopics.length > 0 ? usedTopics.map((t, i) => `Edition ${i + 1}: ${t}`).joi
                     system: SYSTEM_PROMPT,
                     messages: [{ role: "user", content: userContent }],
                 }),
+                signal: AbortSignal.timeout(180000), // 3-minute hard timeout
             });
             const data = await response.json();
             if (!response.ok)
@@ -491,7 +506,7 @@ ${usedTopics.length > 0 ? usedTopics.map((t, i) => `Edition ${i + 1}: ${t}`).joi
             '<tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#f96302;font-weight:bold;letter-spacing:1px;text-transform:uppercase;padding-bottom:3px;">Sr. Manager, Customer Identity Trust</td></tr>',
             '<tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#a0b0c8;">The Home Depot &nbsp;&middot;&nbsp; Fraud Prevention</td></tr>',
             '</table></td></tr></table></td></tr>',
-            content.sources && content.sources.length > 0 ? '<tr><td bgcolor="#f5f3ef" style="background-color:#f5f3ef;padding:18px 32px;border-top:1px solid #ddd;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:3px;color:#999;text-transform:uppercase;font-weight:bold;padding-bottom:10px;">Sources &amp; References</td></tr><tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#666;line-height:1.9;">' + (content.sources || []).map(function(s) { return s.url ? '<a href="' + s.url + '" style="color:#1a5fa8;text-decoration:none;">' + s.name + '</a>' : s.name; }).join('&nbsp;&nbsp;|&nbsp;&nbsp;') + '</td></tr></table></td></tr>' : '',
+            content.sources && content.sources.length > 0 ? '<tr><td bgcolor="#f5f3ef" style="background-color:#f5f3ef;padding:18px 32px;border-top:1px solid #ddd;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:3px;color:#999;text-transform:uppercase;font-weight:bold;padding-bottom:10px;">Sources &amp; References</td></tr><tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#666;line-height:1.9;">' + (content.sources || []).map(function(s) { const href = s.article_url || s.url; return href ? '<a href="' + href + '" style="color:#1a5fa8;text-decoration:none;">' + s.name + '</a>' : s.name; }).join('&nbsp;&nbsp;|&nbsp;&nbsp;') + '</td></tr></table></td></tr>' : '',
             '<tr><td bgcolor="#f0ece4" style="background-color:#f0ece4;padding:16px 32px;border-top:3px solid #f96302;">',
             '<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>',
             '<td style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#999;line-height:1.6;">',
@@ -615,7 +630,7 @@ ${usedTopics.length > 0 ? usedTopics.map((t, i) => `Edition ${i + 1}: ${t}`).joi
             loading && (React.createElement("div", { style: { textAlign: "center", padding: "60px 0", color: "#888", fontFamily: "Arial,sans-serif" } },
                 React.createElement("div", { style: { fontSize: "40px", marginBottom: "16px" } }, "\uD83D\uDD0E"),
                 React.createElement("div", { style: { fontSize: "17px", marginBottom: "8px", color: "#ccc" } }, "Scanning this week's fraud landscape..."),
-                React.createElement("div", { style: { fontSize: "14px" } }, "Searching 6 source categories \u00B7 United States only"))),
+                React.createElement("div", { style: { fontSize: "14px" } }, "Waking server \u00B7 Searching 6 source categories \u00B7 United States only"))),
             error && (React.createElement("div", { style: { background: "#2a1010", border: "1px solid #6b1a1a", borderRadius: "6px", padding: "16px 20px", color: "#f87171", fontFamily: "Arial,sans-serif", fontSize: "14px" } },
                 "\u26A0\uFE0F ",
                 error)),
@@ -652,9 +667,13 @@ ${usedTopics.length > 0 ? usedTopics.map((t, i) => `Edition ${i + 1}: ${t}`).joi
                     content.sources && content.sources.length > 0
                         ? React.createElement("ul", { style: { margin: 0, padding: "0 0 0 16px" } },
                             ...(content.sources).map(function(s, i) {
+                                const href = s.article_url || s.url;
+                                const hasArticle = !!s.article_url;
                                 return React.createElement("li", { key: i, style: { fontFamily: "Arial,sans-serif", fontSize: "12px", color: "#888", lineHeight: "1.9", listStyleType: "disc" } },
-                                    s.url
-                                        ? React.createElement("a", { href: s.url, target: "_blank", rel: "noopener noreferrer", style: { color: "#6b9fd4", textDecoration: "none" } }, s.name)
+                                    href
+                                        ? React.createElement("span", null,
+                                            React.createElement("a", { href: href, target: "_blank", rel: "noopener noreferrer", style: { color: "#6b9fd4", textDecoration: "none" } }, s.name),
+                                            hasArticle && s.url ? React.createElement("a", { href: s.url, target: "_blank", rel: "noopener noreferrer", style: { color: "#555", fontSize: "10px", marginLeft: "6px", textDecoration: "none" } }, "(site)") : null)
                                         : s.name);
                             })
                           )
